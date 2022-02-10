@@ -4,7 +4,4 @@ const isValidEmail = (email) => {
 	return emailRegex.test(email);
 };
 
-const test = isValidEmail("thisIsAnEmail@outlook.com");
-console.log(test);
-
 module.exports = isValidEmail;
