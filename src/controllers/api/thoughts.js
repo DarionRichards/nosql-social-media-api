@@ -34,8 +34,28 @@ const getThoughtById = async (req, res) => {
 		});
 	}
 };
-const createThought = (req, res) => {
-	res.send("createThought");
+const createThought = async (req, res) => {
+	try {
+		const {thoughtText, username, userId} = req.body;
+		const createdThought = await Thought.create({thoughtText, username});
+
+		const user = await User.findById(userId);
+
+		const newUserThoughts = user.thoughts.concat(createdThought._id);
+
+		await User.findByIdAndUpdate(userId, {thoughts: newUserThoughts});
+
+		return res.status(200).json({
+			success: true,
+			data: createdThought,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			success: false,
+			message: "Failed to create Thought",
+			error: error.message,
+		});
+	}
 };
 const updateThoughtById = (req, res) => {
 	res.send("updateThoughtById");
