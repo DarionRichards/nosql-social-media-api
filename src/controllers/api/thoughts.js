@@ -34,6 +34,7 @@ const getThoughtById = async (req, res) => {
 		});
 	}
 };
+
 const createThought = async (req, res) => {
 	try {
 		const {thoughtText, username, userId} = req.body;
@@ -57,10 +58,37 @@ const createThought = async (req, res) => {
 		});
 	}
 };
-const updateThoughtById = (req, res) => {
-	res.send("updateThoughtById");
+
+const updateThoughtById = async (req, res) => {
+	try {
+		const thoughtId = req.params.id;
+
+		const updatedThought = await Thought.findByIdAndUpdate(
+			thoughtId,
+			{
+				thoughtText: req.body.thoughtText,
+			},
+			{
+				new: true,
+			}
+		);
+
+		return res.status(200).json({
+			success: true,
+			message: `Successfully up thought with id: ${thoughtId}`,
+			data: updatedThought,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			success: false,
+			message: "Failed to update Thought",
+			error: error.message,
+		});
+	}
 };
 const deleteThoughtById = (req, res) => {
+	// Delete thought
+	// Delete thought from User.thoughts array
 	res.send("deleteThoughtById");
 };
 
