@@ -16,8 +16,25 @@ const getUsers = async (req, res) => {
 	}
 };
 
-const getUserById = (req, res) => {
-	res.send("getUserById");
+const getUserById = async (req, res) => {
+	try {
+		const userId = req.params.id;
+
+		const user = await User.findById(userId)
+			.populate("thoughts")
+			.populate("friends");
+
+		return res.status(200).json({
+			success: true,
+			data: user,
+		});
+	} catch (error) {
+		return res.status(404).json({
+			success: false,
+			message: "Failed to get user",
+			error: error.message,
+		});
+	}
 };
 const createUser = (req, res) => {
 	res.send("createUser");
