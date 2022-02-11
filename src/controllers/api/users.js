@@ -8,7 +8,7 @@ const getUsers = async (req, res) => {
 			data: users,
 		});
 	} catch (error) {
-		return res.json({
+		return res.status(500).json({
 			success: false,
 			message: "Failed to get users",
 			error: error.message,
@@ -29,15 +29,29 @@ const getUserById = async (req, res) => {
 			data: user,
 		});
 	} catch (error) {
-		return res.status(404).json({
+		return res.status(500).json({
 			success: false,
 			message: "Failed to get user",
 			error: error.message,
 		});
 	}
 };
-const createUser = (req, res) => {
-	res.send("createUser");
+const createUser = async (req, res) => {
+	try {
+		const user = req.body;
+		const createdUser = await User.create(user);
+
+		return res.status(200).json({
+			success: true,
+			data: createdUser,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			success: false,
+			message: "Failed to create User",
+			error: error.message,
+		});
+	}
 };
 const updateUserById = (req, res) => {
 	res.send("updateUserById");
