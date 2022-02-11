@@ -1,4 +1,4 @@
-const {User} = require("../../models");
+const {User, Thought} = require("../../models");
 
 const getUsers = async (req, res) => {
 	try {
@@ -36,6 +36,7 @@ const getUserById = async (req, res) => {
 		});
 	}
 };
+
 const createUser = async (req, res) => {
 	try {
 		const user = req.body;
@@ -53,8 +54,36 @@ const createUser = async (req, res) => {
 		});
 	}
 };
-const updateUserById = (req, res) => {
-	res.send("updateUserById");
+
+const updateUserById = async (req, res) => {
+	try {
+		const userId = req.params.id;
+
+		// Get the currently stored username
+		const user = await User.findById(userId);
+
+		// Update thoughts associated with currently stored username (before update) and update with new username
+		await Thought.updateMany(
+			{username: user.username},
+			{username: req.body.username}
+		);
+
+		// Update user with their new details
+		const updatedUser = await User.findByIdAndUpdate(userId, req.body, {
+			new: true,
+		});
+
+		return res.status(200).json({
+			success: true,
+			data: updatedUser,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			success: false,
+			message: "Failed to update user",
+			error: error.message,
+		});
+	}
 };
 const deleteUserById = (req, res) => {
 	res.send("deleteUserById");
