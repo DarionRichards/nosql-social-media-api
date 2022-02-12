@@ -86,10 +86,24 @@ const updateThoughtById = async (req, res) => {
 		});
 	}
 };
-const deleteThoughtById = (req, res) => {
-	// Delete thought
-	// Delete thought from User.thoughts array
-	res.send("deleteThoughtById");
+
+const deleteThoughtById = async (req, res) => {
+	try {
+		const thoughtId = req.params.id;
+
+		await Thought.findByIdAndDelete(thoughtId);
+
+		return res.status(200).json({
+			success: true,
+			message: `Successfully deleted thought with id: ${thoughtId}`,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			success: false,
+			message: `Failed to delete thought`,
+			error: error.message,
+		});
+	}
 };
 
 module.exports = {
