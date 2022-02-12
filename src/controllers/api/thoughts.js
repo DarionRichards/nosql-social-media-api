@@ -38,13 +38,16 @@ const getThoughtById = async (req, res) => {
 const createThought = async (req, res) => {
 	try {
 		const {thoughtText, username, userId} = req.body;
+
 		const createdThought = await Thought.create({thoughtText, username});
 
-		const user = await User.findById(userId);
-
-		const newUserThoughts = user.thoughts.concat(createdThought._id);
-
-		await User.findByIdAndUpdate(userId, {thoughts: newUserThoughts});
+		await User.findByIdAndUpdate(
+			userId,
+			{
+				$push: {thoughts: {...createdThought}},
+			},
+			{new: true}
+		);
 
 		return res.status(200).json({
 			success: true,
