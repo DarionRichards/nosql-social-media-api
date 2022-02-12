@@ -26,8 +26,31 @@ const addFriend = async (req, res) => {
 		});
 	}
 };
-const deleteFriendById = (req, res) => {
-	res.send("deleteFriendById");
+const deleteFriendById = async (req, res) => {
+	try {
+		const {userId, friendId} = req.params;
+
+		const updatedUser = await User.findByIdAndUpdate(
+			userId,
+			{
+				$pull: {friends: friendId},
+			},
+			{
+				new: true,
+			}
+		);
+
+		return res.status(200).json({
+			success: true,
+			data: updatedUser,
+		});
+	} catch (error) {
+		return res.status(500).json({
+			success: false,
+			message: "Could not delete friend",
+			error: error.message,
+		});
+	}
 };
 
 module.exports = {
