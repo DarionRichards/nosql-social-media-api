@@ -1,12 +1,12 @@
-const { Router } = require("express");
+const {Router} = require("express");
 const {
-    getUsers,
-    getUserById,
-    createUser,
-    updateUserById,
-    deleteUserById,
+	getUsers,
+	getUserById,
+	createUser,
+	updateUserById,
+	deleteUserById,
 } = require("../../controllers/api/users");
-const friends = require("./friends");
+const {addFriend, deleteFriendById} = require("../../controllers/api/friends");
 
 const router = Router();
 
@@ -16,6 +16,7 @@ router.post("/", createUser);
 router.put("/:id", updateUserById);
 router.delete("/:id", deleteUserById);
 
-router.use("/:id/friends", friends);
+router.post("/:userId/friends/:friendId", addFriend);
+router.delete("/:userId/friends/:friendId", deleteFriendById);
 
 module.exports = router;
