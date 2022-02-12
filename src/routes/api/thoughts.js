@@ -1,12 +1,15 @@
-const { Router } = require("express");
+const {Router} = require("express");
 const {
-    getThoughts,
-    getThoughtById,
-    createThought,
-    updateThoughtById,
-    deleteThoughtById,
+	addReaction,
+	deleteReactionById,
+} = require("../../controllers/api/reactions");
+const {
+	getThoughts,
+	getThoughtById,
+	createThought,
+	updateThoughtById,
+	deleteThoughtById,
 } = require("../../controllers/api/thoughts");
-const reactions = require("./reactions");
 
 const router = Router();
 
@@ -16,6 +19,7 @@ router.post("/", createThought);
 router.put("/:id", updateThoughtById);
 router.delete("/:id", deleteThoughtById);
 
-router.use("/:id/reactions", reactions);
+router.post("/:thoughtId/reactions", addReaction);
+router.delete("/:thoughtId/reactions/:reactionId", deleteReactionById);
 
 module.exports = router;
