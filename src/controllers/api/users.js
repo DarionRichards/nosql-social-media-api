@@ -48,12 +48,36 @@ const getUserById = async (req, res) => {
 const createUser = async (req, res) => {
 	try {
 		const user = req.body;
-		const createdUser = await User.create(user);
 
-		return res.status(200).json({
-			success: true,
-			data: createdUser,
-		});
+		if (!user.username) {
+			return res.status(400).json({
+				success: false,
+				message: "No username supplied",
+			});
+		} else if (!user.email) {
+			return res.status(400).json({
+				success: false,
+				message: "No email supplied",
+			});
+		} else {
+			const createdUser = await User.updateOne(
+				user,
+				{$set: {username: user.username, email: user.email}},
+				{upsert: true}
+			);
+
+			if (createdUser.matchedCount) {
+				return res.status(409).json({
+					success: false,
+					message: "User already exists",
+				});
+			} else {
+				return res.status(200).json({
+					success: true,
+					data: createdUser,
+				});
+			}
+		}
 	} catch (error) {
 		return res.status(500).json({
 			success: false,
