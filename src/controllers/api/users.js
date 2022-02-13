@@ -89,26 +89,37 @@ const createUser = async (req, res) => {
 
 const updateUserById = async (req, res) => {
 	try {
-		const userId = req.params.id;
+		const {username, email} = req.body;
 
-		// Get the currently stored username
-		const user = await User.findById(userId);
+		if (!username) {
+			return res.status(400).json({
+				success: false,
+				message: "No username supplied",
+			});
+		} else if (!email) {
+			return res.status(400).json({
+				success: false,
+				message: "No email supplied",
+			});
+		} else {
+			// Update user with their new details
+			const oldUser = await User.findByIdAndUpdate(req.params.id, {
+				username,
+				email,
+			});
 
-		// Update thoughts associated with currently stored username (before update) and update with new username
-		await Thought.updateMany(
-			{username: user.username},
-			{username: req.body.username}
-		);
+			// Update thoughts associated with new stored username
+			await Thought.updateMany(
+				{username: oldUser.username},
+				{username: username}
+			);
 
-		// Update user with their new details
-		const updatedUser = await User.findByIdAndUpdate(userId, req.body, {
-			new: true,
-		});
-
-		return res.status(200).json({
-			success: true,
-			data: updatedUser,
-		});
+			return res.status(200).json({
+				success: true,
+				message:
+					"Successfully updated user and associated thoughts that belong.",
+			});
+		}
 	} catch (error) {
 		return res.status(500).json({
 			success: false,
