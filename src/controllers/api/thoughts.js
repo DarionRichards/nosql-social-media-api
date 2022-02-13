@@ -91,21 +91,28 @@ const updateThoughtById = async (req, res) => {
 	try {
 		const thoughtId = req.params.id;
 
-		const updatedThought = await Thought.findByIdAndUpdate(
-			thoughtId,
-			{
-				thoughtText: req.body.thoughtText,
-			},
-			{
-				new: true,
-			}
-		);
+		if (!req.body.thoughtText) {
+			return res.status(400).json({
+				success: false,
+				message: "No thoughtText supplied in body",
+			});
+		} else {
+			const updatedThought = await Thought.findByIdAndUpdate(
+				thoughtId,
+				{
+					thoughtText: req.body.thoughtText,
+				},
+				{
+					new: true,
+				}
+			);
 
-		return res.status(200).json({
-			success: true,
-			message: `Successfully up thought with id: ${thoughtId}`,
-			data: updatedThought,
-		});
+			return res.status(200).json({
+				success: true,
+				message: `Successfully up thought with id: ${thoughtId}`,
+				data: updatedThought,
+			});
+		}
 	} catch (error) {
 		return res.status(500).json({
 			success: false,
