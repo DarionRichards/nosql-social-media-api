@@ -130,28 +130,12 @@ const updateUserById = async (req, res) => {
 };
 const deleteUserById = async (req, res) => {
 	try {
-		const userId = req.params.id;
-
-		const user = await User.findById(userId);
-
-		// Return an array of ID's as a string to delete
-		const userThoughtsArray = user.thoughts.map((thoughtId) =>
-			thoughtId.toString()
-		);
-
-		// Delete ALL associated thoughts by ID
-		await Thought.deleteMany({
-			_id: {
-				$in: userThoughtsArray,
-			},
-		});
-
-		// Delete a user by id
-		await User.deleteOne({_id: userId});
+		const oldUser = await User.findByIdAndRemove(req.params.id);
+		await Thought.deleteMany({username: oldUser.username});
 
 		return res.status(200).json({
 			success: true,
-			message: `Successfully deleted user with id: ${userId} and associated thoughts`,
+			message: `Successfully deleted user with id: ${req.params.id} and associated thoughts`,
 		});
 	} catch (error) {
 		return res.status(500).json({
