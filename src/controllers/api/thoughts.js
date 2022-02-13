@@ -47,20 +47,37 @@ const createThought = async (req, res) => {
 	try {
 		const {thoughtText, username, userId} = req.body;
 
-		const createdThought = await Thought.create({thoughtText, username});
+		if (!thoughtText) {
+			return res.status(400).json({
+				success: false,
+				message: "No thought text supplied in body",
+			});
+		} else if (!username) {
+			return res.status(400).json({
+				success: false,
+				message: "No username supplied in body",
+			});
+		} else if (!userId) {
+			return res.status(400).json({
+				success: false,
+				message: "No userId supplied in body",
+			});
+		} else {
+			const createdThought = await Thought.create({thoughtText, username});
 
-		await User.findByIdAndUpdate(
-			userId,
-			{
-				$push: {thoughts: {...createdThought}},
-			},
-			{new: true}
-		);
+			await User.findByIdAndUpdate(
+				userId,
+				{
+					$push: {thoughts: {...createdThought}},
+				},
+				{new: true}
+			);
 
-		return res.status(200).json({
-			success: true,
-			data: createdThought,
-		});
+			return res.status(200).json({
+				success: true,
+				data: createdThought,
+			});
+		}
 	} catch (error) {
 		return res.status(500).json({
 			success: false,
