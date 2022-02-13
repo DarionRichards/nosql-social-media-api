@@ -3,10 +3,18 @@ const {User, Thought} = require("../../models");
 const getUsers = async (req, res) => {
 	try {
 		const users = await User.find({});
-		return res.status(200).json({
-			success: true,
-			data: users,
-		});
+
+		if (!users.length) {
+			return res.status(404).json({
+				success: false,
+				message: "No user's exist in database",
+			});
+		} else {
+			return res.status(200).json({
+				success: true,
+				data: users,
+			});
+		}
 	} catch (error) {
 		return res.status(500).json({
 			success: false,
